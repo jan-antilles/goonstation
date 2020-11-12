@@ -605,6 +605,7 @@ world/proc/updateCameraVisibility()
 			if( t.z != 1 ) continue
 			cam_candidates += t
 
+#ifdef !MAP_OVERRIDE_POD_WARS
 
 		for(var/turf/t as() in cam_candidates) //ugh
 			t.aiImage = new
@@ -621,7 +622,6 @@ world/proc/updateCameraVisibility()
 				game_start_countdown?.update_status("Updating cameras...\n[thispct]%")
 
 			LAGCHECK(100)
-
 		aiDirty = 1
 		game_start_countdown?.update_status("Updating camera vis...\n")
 	for_by_tcl(C, /obj/machinery/camera)
@@ -633,6 +633,7 @@ world/proc/updateCameraVisibility()
 			else
 				t.aiImage.loc = t
 	aiDirty = 0
+#endif
 
 /obj/machinery/camera/proc/remove_from_turfs() //check if turf cameras is 0 . Maybe loop through each affected turf's cameras, and update static on them here instead of going thru updateCameraVisibility()?
 	//world << "Camera deleted! @ [src.loc]"
