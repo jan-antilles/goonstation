@@ -594,9 +594,6 @@ world/proc/updateCameraVisibility()
 		ma.appearance_flags = TILE_BOUND | KEEP_APART | RESET_TRANSFORM | RESET_ALPHA | RESET_COLOR
 		ma.name = " "
 
-		var/lastpct = 0
-		var/thispct = 0
-		var/donecount = 0
 
 		// takes about one second compared to the ~12++ that the actual calculations take
 		game_start_countdown?.update_status("Updating cameras...\n(Calculating...)")
@@ -606,6 +603,9 @@ world/proc/updateCameraVisibility()
 			cam_candidates += t
 
 #ifdef !MAP_OVERRIDE_POD_WARS
+		var/lastpct = 0
+		var/thispct = 0
+		var/donecount = 0
 
 		for(var/turf/t as() in cam_candidates) //ugh
 			t.aiImage = new
