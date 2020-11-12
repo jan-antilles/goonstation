@@ -17,6 +17,8 @@
 	var/datum/pod_wars_team/team_SY
 
 	var/obj/screen/score_board/board
+	var/round_limit = 35 MIUNTES
+	var/force_end = 0
 
 /datum/game_mode/pod_wars/announce()
 	boutput(world, "<B>The current game mode is - Pod Wars!</B>")
@@ -59,14 +61,27 @@
 
 		else
 			var/half = round(length/2)
-			team_NT.accept_players(readied_minds.Copy(1, half))
-			team_SY.accept_players(readied_minds.Copy(half+1, length))
+			team_NT.accept_players(readied_minds.Copy(1, half+1))
+			team_SY.accept_players(readied_minds.Copy(half+1, 0))
 
 	return 1
 
 /datum/game_mode/pod_wars/post_setup()
 	SPAWN_DBG(-1)
 		setup_asteroid_ores()
+
+	if(round_limit > 0)
+		SPAWN_DBG (round_limit) // this has got to end soon
+			command_alert("Something something radiation.","Emergency Update")
+			sleep(6000) // 10 minutes to clean up shop
+			command_alert("Revolution heads have been identified. Please stand by for hostile employee termination.", "Emergency Update")
+			sleep(3000) // 5 minutes until everyone dies
+			command_alert("You may feel a slight burning sensation.", "Emergency Update")
+			sleep(10 SECONDS) // welp
+			for(var/mob/living/carbon/M in mobs)
+				M.gib()
+			force_end = 1
+
 
 /datum/game_mode/pod_wars/proc/setup_asteroid_ores()
 
@@ -107,12 +122,11 @@
 	offset ++
 
 	if (team == team_NT)
+		board?.bar_NT.points = team.points
 		animate(board.bar_NT, transform = M1, pixel_x = offset, time = 10)
 	else
+		board?.bar_SY.points = team.points
 		animate(board.bar_SY, transform = M1, pixel_x = offset, time = 10)
-
-	if (team.points <= 0)
-		check_finished()
 
 //check which team they are on and iff they are a commander for said team. Deduct/award points
 /datum/game_mode/pod_wars/on_human_death(var/mob/M)
@@ -156,7 +170,9 @@
 
 
 /datum/game_mode/pod_wars/check_finished()
-	if (team_NT.points < 0 || team_SY.points < 0)
+	if (force_end)
+		return 1
+	if (team_NT.points <= 0 || team_SY.points <= 0)
 		return 1
 	if (team_NT.points > team_NT.max_points || team_SY.points > team_SY.max_points)
 		return 1
@@ -201,7 +217,7 @@
 			base_area = /area/podmode/team1 //area north, NT crew
 #endif
 		else if (team_num == TEAM_SYNDICATE)
-			name = "The Syndicate"
+			name = "Syndicate"
 #ifdef MAP_OVERRIDE_POD_WARS
 			base_area = /area/podmode/team2 //area south, Syndicate crew
 #endif
@@ -424,6 +440,9 @@
 		animate_rainbow_glow(src) // rgb shit cause it looks cool
 		SubscribeToProcess()
 		last_check = world.time
+
+	ex_act(severity)
+		return
 
 	disposing()
 		..()
