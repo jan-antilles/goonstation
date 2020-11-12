@@ -422,6 +422,13 @@
 		..()
 		src.setMaterial(getMaterial("gold"))
 
+/obj/item/clothing/head/longtophat
+	name = "Long tophat"
+	desc = "When you look at this hat you can only think of how many monkeys you could fit in it."
+	wear_image_icon = 'icons/mob/fruithat.dmi'
+	icon_state = "ltophat"
+	item_state = "lthat"
+
 /obj/item/clothing/head/chefhat
 	name = "Chef's hat"
 	desc = "Your toque blanche, coloured as such so that your poor sanitation is obvious, and the blood shows up nice and crazy."
@@ -470,7 +477,7 @@
 
 /obj/item/clothing/head/hosberet
 	name = "HoS Beret"
-	desc = "This makes you feel like Che Guevara."
+	desc = "This makes you feel like space Che Guevara."
 	icon_state = "hosberet"
 	item_state = "hosberet"
 	c_flags = SPACEWEAR
@@ -480,9 +487,16 @@
 
 /obj/item/clothing/head/NTberet
 	name = "Nanotrasen Beret"
-	desc = "For the inner dictator in you."
+	desc = "For the inner space dictator in you."
 	icon_state = "ntberet"
 	item_state = "ntberet"
+	c_flags = SPACEWEAR
+
+/obj/item/clothing/head/NTberet/commander
+	name = "Nanotrasen Beret"
+	desc = "For the inner space dictator in you."
+	icon_state = "ntberet_commander"
+	item_state = "ntberet_commander"
 	c_flags = SPACEWEAR
 
 /obj/item/clothing/head/XComHair

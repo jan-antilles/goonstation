@@ -308,7 +308,6 @@
 			src.icon_state = "phaser-new[ratio]"
 			return
 
-
 ///////////////////////////////////////Rad Crossbow
 /obj/item/gun/energy/crossbow
 	name = "mini rad-poison-crossbow"
@@ -756,6 +755,61 @@
 		projectiles = list(current_projectile)
 		..()
 
+
+///////////////////////////////////////PW Blasters
+/obj/item/gun/energy/blaster_pod_wars
+	name = "blaster pistol"
+	desc = "A dangerous-looking blaster pistol. It's self-charging by a radioactive power cell."
+	icon = 'icons/obj/items/gun.dmi'
+	icon_state = "pw_pistol"
+	w_class = 3.0
+	force = 8.0
+	mats = 0
+	var/image/indicator_display = null
+	var/display_color =	"#00FF00"
+	var/initial_proj = /datum/projectile/laser/blaster
+
+	disposing()
+		indicator_display = null
+		..()
+
+
+	New()
+		var/obj/item/ammo/power_cell/self_charging/PC = new/obj/item/ammo/power_cell/self_charging/
+		PC.max_charge = 200
+		PC.charge = 200
+		PC.recharge_rate = 15	//default speed is 5
+		cell = PC
+		current_projectile = new initial_proj
+		projectiles = list(current_projectile)
+		src.indicator_display = image('icons/obj/items/gun.dmi', "")
+		..()
+
+	update_icon()
+		..()
+		src.overlays = null
+
+		if (src.cell)
+			var/maxCharge = (src.cell.max_charge > 0 ? src.cell.max_charge : 0)
+			var/ratio = min(1, src.cell.charge / maxCharge)
+			ratio = round(ratio, 0.25) * 100
+			if (ratio == 0)
+				return
+			indicator_display.icon_state = "pw_pistol_power-[ratio]"
+			indicator_display.color = display_color
+			src.overlays += indicator_display
+
+	nanotrasen
+		muzzle_flash = "muzzle_flash_laser"
+		display_color =	"#0a4882"
+		initial_proj = /datum/projectile/laser/blaster/pod_pilot/blue_NT
+
+	syndicate
+		muzzle_flash = "muzzle_flash_plaser"
+		display_color =	"#ff4043"
+		initial_proj = /datum/projectile/laser/blaster/pod_pilot/red_SY
+
+
 ///////////////////////////////////////Modular Blasters
 /obj/item/gun/energy/blaster_pistol
 	name = "blaster pistol"
@@ -804,6 +858,7 @@
 			ratio = round(ratio, 0.25) * 100
 			src.icon_state = "pistol[ratio]"
 			return
+
 
 
 
@@ -1248,8 +1303,8 @@
 	New(var/mob/M)
 		cell = new/obj/item/ammo/power_cell/self_charging/lawbringer
 		current_projectile = new/datum/projectile/energy_bolt/aoe
-		projectiles = list("detain" = current_projectile, "execute" = new/datum/projectile/bullet/revolver_38, "smokeshot" = new/datum/projectile/bullet/smoke, "knockout" = new/datum/projectile/bullet/tranq_dart/law_giver, "hotshot" = new/datum/projectile/bullet/flare, "bigshot" = new/datum/projectile/bullet/aex/lawbringer, "clownshot" = new/datum/projectile/bullet/clownshot, "pulse" = new/datum/projectile/energy_bolt/pulse)
-		// projectiles = list(current_projectile,new/datum/projectile/bullet/revolver_38,new/datum/projectile/bullet/smoke,new/datum/projectile/bullet/tranq_dart/law_giver,new/datum/projectile/bullet/flare,new/datum/projectile/bullet/aex/lawbringer,new/datum/projectile/bullet/clownshot)
+		projectiles = list("detain" = current_projectile, "execute" = new/datum/projectile/bullet/revolver_38/lb, "smokeshot" = new/datum/projectile/bullet/smoke, "knockout" = new/datum/projectile/bullet/tranq_dart/law_giver, "hotshot" = new/datum/projectile/bullet/flare, "bigshot" = new/datum/projectile/bullet/aex/lawbringer, "clownshot" = new/datum/projectile/bullet/clownshot, "pulse" = new/datum/projectile/energy_bolt/pulse)
+		// projectiles = list(current_projectile,new/datum/projectile/bullet/revolver_38/lb,new/datum/projectile/bullet/smoke,new/datum/projectile/bullet/tranq_dart/law_giver,new/datum/projectile/bullet/flare,new/datum/projectile/bullet/aex/lawbringer,new/datum/projectile/bullet/clownshot)
 
 		src.indicator_display = image('icons/obj/items/gun.dmi', "")
 		asign_name(M)
@@ -1406,7 +1461,7 @@
 			if(current_projectile.type == /datum/projectile/energy_bolt/aoe)			//detain - yellow
 				indicator_display.color = "#FFFF00"
 				muzzle_flash = "muzzle_flash_elec"
-			else if (current_projectile.type == /datum/projectile/bullet/revolver_38)			//execute - cyan
+			else if (current_projectile.type == /datum/projectile/bullet/revolver_38/lb)			//execute - cyan
 				indicator_display.color = "#00FFFF"
 				muzzle_flash = "muzzle_flash"
 			else if (current_projectile.type == /datum/projectile/bullet/smoke)			//smokeshot - dark-blue

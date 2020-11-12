@@ -116,6 +116,12 @@
 		icon_state = "jacket_yellow"
 		item_state = "jacket_yellow"
 
+	sparkly
+		name = "sparkly jacket"
+		desc = "No glitter. No LEDs. Just magic!"
+		icon_state = "jacket_sparkly"
+		item_state = "jacket_sparkly"
+
 	design
 		name = "jacket"
 		desc = "A colorful jacket with a neat design on the back."
@@ -303,6 +309,10 @@
 	body_parts_covered = TORSO|LEGS|ARMS
 	permeability_coefficient = 0.005
 	over_hair = 1
+
+	New()
+		. = ..()
+		AddComponent(/datum/component/wearertargeting/geiger, list(SLOT_WEAR_SUIT))
 
 	setupProperties()
 		..()
@@ -1254,11 +1264,34 @@
 		setProperty("meleeprot", 5)
 		setProperty("rangedprot", 2)
 
+//NT pod wars suits
 /obj/item/clothing/suit/space/nanotrasen
 	name = "Nanotrasen Heavy Armor"
 	icon_state = "ntarmor2"
 	item_state = "ntarmor2"
 	desc = "Heavy armor used by certain Nanotrasen bodyguards."
+
+	pilot
+		name = "NT space suit"
+		icon_state = "nanotrasen_pilot"
+		item_state = "nanotrasen_pilot"
+		desc = "A suit that protects against low pressure environments. Issued to nanotrasen pilots."
+
+		setupProperties()
+			..()
+			setProperty("space_movespeed", 0)  // syndicate space suits don't suffer from slowdown
+
+		commander
+			name = "commander's great coat"
+			icon_state = "ntcommander_coat"
+			item_state = "ntcommander_coat"
+			desc = "A fear-inspiring, blue-ish-leather great coat, typically worn by a NanoTrasen Pod Commander. Why does it look like it's been dyed painted blue?"
+
+			setupProperties()
+				..()
+				setProperty("exploprot", 40)
+				setProperty("meleeprot", 6)
+				setProperty("rangedprot", 3)
 
 /obj/item/clothing/suit/cultist
 	name = "cultist robe"

@@ -10,8 +10,10 @@
 
 	unsimulated
 		var/can_replace_with_stuff = 0	//If ReplaceWith() actually does a thing or not.
+#ifdef RUNTIME_CHECKING
+		can_replace_with_stuff = 1  //Shitty dumb hack bullshit
+#endif
 		allows_vehicles = 0
-
 	proc/set_dir(newdir)
 		dir = newdir
 
@@ -56,7 +58,7 @@
 		..()
 
 	Del()
-		if (cameras && cameras.len)
+		if (length(cameras))
 			for (var/obj/machinery/camera/C as() in by_type[/obj/machinery/camera])
 				if(C.coveredTiles)
 					C.coveredTiles -= src
@@ -117,7 +119,7 @@
 		for(var/dir in (cardinal + 0))
 			var/turf/thing = get_step(src, dir)
 			var/area/fuck_everything = thing?.loc
-			if(fuck_everything && fuck_everything.expandable && (fuck_everything.type != /area))
+			if(fuck_everything?.expandable && (fuck_everything.type != /area))
 				fuck_everything.contents += src
 				return
 
@@ -262,7 +264,7 @@
 		return 1
 
 	//First, check objects to block exit
-	if (cturf && cturf.checkingexit > 0) //dont bother checking unless the turf actually contains a checkable :)
+	if (cturf?.checkingexit > 0) //dont bother checking unless the turf actually contains a checkable :)
 		for(var/thing in cturf)
 			var/obj/obstacle = thing
 			if(obstacle == mover)
@@ -367,7 +369,7 @@
 				if (A.event_handler_flags & USE_PROXIMITY)
 					A.HasProximity(M, 1) //IMPORTANT MBCNOTE : ADD USE_PROXIMITY FLAG TO ANY ATOM USING HASPROX THX BB
 
-	if(!src.throw_unlimited && M && M.no_gravity)
+	if(!src.throw_unlimited && M?.no_gravity)
 		BeginSpacePush(M)
 
 #ifdef NON_EUCLIDEAN
@@ -1017,6 +1019,10 @@ Other Goonstation servers:[serverList]"}
 		return
 	return
 
+#ifdef MAP_OVERRIDE_POD_WARS
+/turf/proc/edge_step(var/atom/movable/A, var/newx, var/newy)
+	return
+#else
 /turf/proc/edge_step(var/atom/movable/A, var/newx, var/newy)
 	var/zlevel = 3 //((A.z=3)?5:3)//(3,4)
 
@@ -1045,9 +1051,9 @@ Other Goonstation servers:[serverList]"}
 	if (newy)
 		A.y = newy
 	SPAWN_DBG (0)
-		if ((A && A.loc))
+		if ((A?.loc))
 			A.loc.Entered(A)
-
+#endif
 //Vr turf is a jerk and pretends to be broken.
 /turf/unsimulated/bombvr/ex_act(severity)
 	switch(severity)

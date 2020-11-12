@@ -93,11 +93,9 @@ o+`        `-` ``..-:yooos-..----------..`
 //#define MAP_OVERRIDE_COGMAP2			// Cogmap 2
 //#define MAP_OVERRIDE_DONUT2			// Updated Donut2
 //#define MAP_OVERRIDE_DONUT3			// Donut3 by Ryumi
-//#define MAP_OVERRIDE_LINEMAP			// Linemap by pgoat
 //#define MAP_OVERRIDE_MUSHROOM			// Updated Mushroom
 //#define MAP_OVERRIDE_TRUNKMAP			// Updated Ovary
 //#define MAP_OVERRIDE_CHIRON			// Chiron by Kusibu
-//#define MAP_OVERRIDE_SAMEDI			// Samedi by Kusibu
 //#define MAP_OVERRIDE_OSHAN			// Oshan
 //#define MAP_OVERRIDE_HORIZON			// Horizon by Warcrimes
 //#define MAP_OVERRIDE_ATLAS			// gannetmap OR IS IT KUBIUSGANNETMAP??
@@ -109,7 +107,8 @@ o+`        `-` ``..-:yooos-..----------..`
 //#define MAP_OVERRIDE_ICARUS
 //#define MAP_OVERRIDE_GEHENNA			// Warcrimes WIP do not use
 //#define MAP_OVERRIDE_PAMGOC			// Pamgoc
-//#define MAP_OVERRIDE_WRESTLEMAP		// Wrestlemap by Overtone
+//#define MAP_OVERRIDE_WRESTLEMAP   // Wrestlemap by Overtone
+#define MAP_OVERRIDE_POD_WARS   // 500x500 Pod Wars map
 
 
 //////////// HOLIDAYS AND OTHER SUCH TOGGLES

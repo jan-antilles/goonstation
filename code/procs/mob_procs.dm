@@ -1,56 +1,56 @@
 /mob/proc/find_in_hand(var/obj/item/I, var/this_hand) // for when you need to find a SPECIFIC THING and not just a type
 	if (!I) // did we not get passed a thing to look for?
-		return 0 // fuck you
+		return // fuck you
 	if (!src.r_hand && !src.l_hand) // is there nothing in either hand?
-		return 0
+		return
 
 	if (this_hand) // were we asked to find a thing in a specific hand?
 		if (this_hand == "right")
 			if (src.r_hand && src.r_hand == I) // is there something in the right hand and is it the thing?
 				return src.r_hand // say where we found it
 			else
-				return 0
+				return
 		else if (this_hand == "left")
 			if (src.l_hand && src.l_hand == I) // is there something in the left hand and is it the thing?
 				return src.l_hand // say where we found it
 			else
-				return 0
+				return
 		else
-			return 0
+			return
 
 	if (src.r_hand && src.r_hand == I) // is there something in the right hand and is it the thing?
 		return src.r_hand // say where we found it
 	else if (src.l_hand && src.l_hand == I) // is there something in the left hand and is it the thing?
 		return src.l_hand // say where we found it
 	else
-		return 0 // vOv
+		return // vOv
 
 /mob/proc/find_type_in_hand(var/obj/item/I, var/this_hand) // for finding a thing of a type but not a specific instance
 	if (!I)
-		return 0
+		return
 	if (!src.r_hand && !src.l_hand)
-		return 0
+		return
 
 	if (this_hand)
 		if (this_hand == "right")
 			if (src.r_hand && istype(src.r_hand, I))
 				return src.r_hand
 			else
-				return 0
+				return
 		else if (this_hand == "left")
 			if (src.l_hand && istype(src.l_hand, I))
 				return src.l_hand
 			else
-				return 0
+				return
 		else
-			return 0
+			return
 
 	if (src.r_hand && istype(src.r_hand, I))
 		return src.r_hand
 	else if (src.l_hand && istype(src.l_hand, I))
 		return src.l_hand
 	else
-		return 0 // vOv
+		return // vOv
 
 /**
 	* Given a tool flag, returns the src mob's tool in hand that matches the flag, or null
@@ -589,9 +589,9 @@
 	return null
 
 /mob/living/carbon/human/equipped_limb()
-	if (!hand && limbs && limbs.r_arm)
+	if (!hand && limbs?.r_arm)
 		return limbs.r_arm.limb_data
-	else if (hand && limbs && limbs.l_arm)
+	else if (hand && limbs?.l_arm)
 		return limbs.l_arm.limb_data
 	return null
 
@@ -772,7 +772,7 @@
 /mob/proc/antagonist_overlay_refresh(var/bypass_cooldown = 0, var/remove = 0)
 	if (!bypass_cooldown && (src.last_overlay_refresh && world.time < src.last_overlay_refresh + 1200))
 		return
-	if (!(ticker && ticker.mode && current_state >= GAME_STATE_PLAYING))
+	if (!(ticker?.mode && current_state >= GAME_STATE_PLAYING))
 		return
 	if (!ismob(src) || !src.client || !src.mind)
 		return
@@ -791,6 +791,7 @@
 	var/see_special = 0 // Just a pass-through. Game mode-specific stuff is handled further down in the proc.
 	var/see_everything = 0
 	var/datum/gang/gang_to_see = null
+	var/datum/pod_wars_team/PWT_to_see = null
 
 	if (isadminghost(src))
 		see_everything = 1
@@ -812,6 +813,13 @@
 		if (istype(ticker.mode, /datum/game_mode/gang))
 			if(src.mind.gang != null)
 				gang_to_see = src.mind.gang
+		//mostly took this from gang. I'm sure it can be better though, sorry. -Kyle
+		if (istype(ticker.mode, /datum/game_mode/pod_wars))
+			var/datum/game_mode/pod_wars/PW = ticker.mode
+			if (locate(src.mind) in PW.team_NT.members)
+				PWT_to_see = PW.team_NT
+			else if (locate(src.mind) in PW.team_SY.members)
+				PWT_to_see = PW.team_SY
 		if (issilicon(src)) // We need to look for borged antagonists too.
 			var/mob/living/silicon/S = src
 			if (src.mind.special_role == "syndicate robot" || (S.syndicate && !S.dependent)) // No AI shells.
@@ -838,7 +846,7 @@
 	if (remove)
 		return
 
-	if (!see_traitors && !see_nukeops && !see_wizards && !see_revs && !see_heads && !see_xmas && !see_special && !see_everything && gang_to_see == null)
+	if (!see_traitors && !see_nukeops && !see_wizards && !see_revs && !see_heads && !see_xmas && !see_special && !see_everything && gang_to_see == null && PWT_to_see == null)
 		src.last_overlay_refresh = world.time
 		return
 
@@ -1017,6 +1025,31 @@
 					if (!see_everything && isobserver(M.current)) continue
 					var/II = image(antag_gang, loc = M.current)
 					can_see.Add(II)
+	else if (istype(ticker.mode, /datum/game_mode/pod_wars))
+		var/datum/game_mode/pod_wars/mode = ticker.mode
+		if (PWT_to_see || see_everything)
+			for (var/datum/mind/M in (mode.team_NT.members + mode.team_SY.members))
+				if (M.current)
+					if (!see_everything && isobserver(M.current)) continue
+					if (PWT_to_see == mode.team_NT)
+						var/I = image(pod_wars_NT, loc = M.current)
+						can_see.Add(I)
+					else if (PWT_to_see == mode.team_SY)
+						var/I = image(pod_wars_SY, loc = M.current)
+						can_see.Add(I)
+
+			//show commanders to everyone, can't hide.
+			//Alright, I'll confess. this draws the commander over the other one. idk how this shit works and it works anyway, I'm not in the mood to learn for real. -Kyle
+			if(mode.team_NT.commander && mode.team_NT.commander.current)
+				// if (PWT_to_see == mode.team_NT || see_everything)
+				var/I = image(pod_wars_NT_CMDR, loc = mode.team_NT.commander.current)
+				can_see.Add(I)
+
+			if(mode.team_SY.commander && mode.team_SY.commander.current)
+				// if (PWT_to_see == mode.team_SY || see_everything)
+				var/I = image(pod_wars_SY_CMDR, loc = mode.team_SY.commander.current)
+				can_see.Add(I)
+
 
 	if (can_see.len > 0)
 		//logTheThing("debug", src, null, "<b>Convair880 antag overlay:</b> [can_see.len] added with parameters all ([see_everything]), T ([see_traitors]), S ([see_nukeops]), W ([see_wizards]), R ([see_revs]), SP ([see_special])")
