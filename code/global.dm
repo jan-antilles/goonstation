@@ -252,7 +252,7 @@ var/global
 	"Pigtails" = "pig",
 	"Ponytail" = "ponytail",
 	"Shimada" = "geisha_s",
-	"Split-Tails" = "twotail",
+	"Split Tails" = "twotail",
 	"Wavy Ponytail" = "wavy_tail",
 	/*Moustaches*/
 	"Biker" = "fu",
