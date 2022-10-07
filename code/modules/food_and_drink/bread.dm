@@ -113,6 +113,29 @@
 	initial_reagents = "bread"
 	food_effects = list("food_hp_up")
 
+	attackby(obj/item/reagent_containers/food/snacks/ingredient/jam, mob/user) //ATTACKED BY JAM
+		var/flavor_name = null
+		var/image/fluid_image = null
+		if (jam.reagents.total_volume < 0) //empty jar :(
+			boutput(user, "There's no jam in the jar to spread!")
+			return
+		jam.reagents.trans_to(src, jam.reagents.total_volume)
+		src.flavor_name() = "[jam.name]"
+		src.UpdateIcon()
+		src.UpdateName()
+
+	update_icon()
+		.=..()
+		if (istype(src, /obj/item/reagent_containers/food/snacks/breadslice/spooky | /obj/item/reagent_containers/food/snacks/breadslice/toastslice/spooky))
+			src.fluid_image = image(src.icon, "spookyjam-overlay")
+		src.fluid_image = image(src.icon, "jam-overlay")
+		var/datum/color/average = reagents.get_average_color()
+		src.fluid_image.color = average.to_rgba()
+		src.underlays += src.fluid_image
+
+	UpdateName()
+		src.name = "[name_prefix(null, 1)][src.real_name ? "[src.real_name] with " : null][src.flavor_name][name_suffix(null, 1)]"
+
 	honeywheat
 		name = "slice of honey-wheat bread"
 		desc = "A slice of bread distinguished by the use of honey in its creation.  Also wheat."

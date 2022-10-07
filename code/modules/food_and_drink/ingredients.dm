@@ -971,3 +971,52 @@ obj/item/reagent_containers/food/snacks/ingredient/pepperoni_log
 			M.reagents.add_reagent("omnizine", 3)
 			M.reagents.add_reagent("methamphetamine", 3)
 		..()
+
+/obj/item/reagent_containers/food/snacks/ingredient/jam
+	name = "jam jar"
+	desc = "When you jam fruit in a jar, you get a jar of jam."
+	icon_state = "jamjar-empty"
+	real_name = "jam"
+	initial_volume = 30
+	var/flavor_name = null
+	var/image/fluid_image
+	doants = 0
+
+	attackby(obj/item/W, mob/user)  //LET'S MAKE JAM
+		if (src.reagents.total_volume > 0)
+			boutput (user, "You try to jam [W] into the jar, but there's already jam inside.")
+			return
+		if (!istype(W, /obj/item/reagent_containers/food/snacks/plant)) //gotta be a fruit/veg
+			boutput (user, "You try to jam [W] into the jar, but it just won't jam.")
+			return
+		if (W.reagents.total_volume < 1) //fruit/veg won't work if it doesn't have reagents
+			boutput (user, "You try to jam [W] into the jar, but it's too dry to jam!")
+			return
+		W.reagents.trans_to(src, W.reagents.total_volume)
+		src.flavor_name = "[W.name]"
+		src.food_color = src.reagents.get_master_color()
+		src.UpdateIcon()
+		src.UpdateName()
+		qdel(W)
+
+	UpdateName()
+		src.name = "[name_prefix(null, 1)][src.flavor_name ? "[src.flavor_name] " : null][src.real_name][name_suffix(null, 1)]"
+
+	update_icon()
+		.=..()
+		src.icon_state = "jamjar-full"
+		src.fluid_image = image(src.icon, "jamjar-overlay")
+		var/datum/color/average = reagents.get_average_color()
+		src.fluid_image.color = average.to_rgba()
+		src.underlays += src.fluid_image
+
+	attack(mob/M, mob/user, def_zone)
+		if (user == M)
+			boutput(user, "You lick all the jam out of [src]!")
+			return
+		else
+			user.visible_message("<b>[user]</b> shoves the entire contents of [src] into [M]'s mouth!")
+			return
+		qdel(src)
+		var/obj/item/reagent_containers/food/snacks/ingredient/jam = new
+
