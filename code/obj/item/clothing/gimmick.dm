@@ -1833,3 +1833,11 @@
 	desc = "JC stands for Jesus Christ."
 	icon_state = "jcdenton"
 	item_state = "jcdenton"
+
+// jan's coat for Grafton, do not spawn
+/obj/item/clothing/suit/grafton
+	name = "worn spacer's coat"
+	desc = "Warm against the cold of space. A nametag on the inside reads 'R. Brandt.'"
+	wear_image_icon = 'icons/mob/clothing/overcoats/worn_suit.dmi'
+	icon_state = "graftoncoat"
+	item_state = "graftoncoat"
